@@ -22,13 +22,12 @@ class MyHandler(FileSystemEventHandler):
             new_destination = folder_destinaton +"/" + filename
             os.rename(src, new_destination)
 
-folder_to_track = "C:\Users\rizzo\Downloads\code"
-folder_destination = "C:\Users\rizzo\Downloads\code"
+folder_to_track = "C:\\Users\rizzo\Downloads\code"
+folder_destination = "C:\\Users\rizzo\Downloads\code"
 event_handler = MyHandler()
 observer = observer()
 observer.schedule(event_handler, folder_to_track, recursive=True)
-
-try:
+try:    
     while True:
         time.sleep(10)
 except KeyboardInterrupt:
