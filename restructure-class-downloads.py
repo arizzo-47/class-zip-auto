@@ -1,35 +1,59 @@
-# Anthony Rizzo
-
+import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-
+import zipfile
 import os
-import json
-import time
 
-class MyHandler(FileSystemEventHandler):
-    i = 1
-    def on_modified(self, event):
-        new_name = "new-file_" + str(self.i) + ".txt"
-        for filename in os.listdir(folder_to_track):
-            file_exists = os.path.isfile(folder_destination + "/" + new_name)
-            while file_exists:
-                self.i += 1
-                new_name = "new_file_" +str(self.i) + ".txt"
-                file_exists = os.path.isfile(folder_destination + "/" + new_name)
+class Watcher:
+    DIRECTORY_TO_WATCH = "C:\\Users\\rizzo\\OneDrive\\School Year\\Fourth Year 2019\\Spring 2020\\Python-automation-script\\class-zip-auto\\testStart"
 
-            src = new_file_track + "/" + filename
-            new_destination = folder_destinaton +"/" + filename
-            os.rename(src, new_destination)
+    def __init__(self):
+        self.observer = Observer()
 
-folder_to_track = "C:\\Users\\rizzo\\OneDrive\\School Year\\Fourth Year 2019\\Spring 2020\\Python-automation-script\\class-zip-auto\\testStart"
-folder_destination = "C:\\Users\\rizzo\\OneDrive\\School Year\\Fourth Year 2019\\Spring 2020\\Python-automation-script\\class-zip-auto\\testEnd"
-event_handler = MyHandler()
-observer = Observer()
-observer.schedule(event_handler, folder_to_track, recursive=True)
-try:    
-    while True:
-        time.sleep(10)
-except KeyboardInterrupt:
-    observer.stop()
-observer.join()
+    def run(self):
+        event_handler = Handler()
+        self.observer.schedule(event_handler, self.DIRECTORY_TO_WATCH, recursive=True)
+        self.observer.start()
+        try:
+            while True:
+                time.sleep(5)
+        except:
+            self.observer.stop()
+            print("Error")
+
+        self.observer.join()
+
+
+class Handler(FileSystemEventHandler):
+
+    @staticmethod
+    def on_any_event(event):
+        file_name = "code.zip"
+
+        if event.event_type == 'created' or event.event_type == 'modified':
+            print("Change in directory detected - %s.\n" % event.src_path)\
+
+            new_file = (event.src_path).split('\\')
+            if new_file[len(new_file) - 1] == file_name:
+                directory_to_place = "C:\\Users\\rizzo\\OneDrive\\School Year\\Fourth Year 2019\\Spring 2020\\Python-automation-script\\class-zip-auto\\testStart"
+
+                tempPath = directory_to_place + "\\tempDir"
+        
+                if not os.path.exists(tempPath):
+                    os.mkdir(tempPath)
+               
+                unzip(file_name, tempPath)
+
+                try:
+                    os.remove(directory_to_place+"\\"+file_name)
+                except:
+                    print("Zip removed")
+                
+
+def unzip(source_filename, dest_dir):
+    zf = zipfile.ZipFile(source_filename)
+    zf.extractall(dest_dir)
+
+if __name__ == '__main__':
+    w = Watcher()
+    w.run()
