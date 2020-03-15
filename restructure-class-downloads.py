@@ -1,6 +1,6 @@
 # Anthony Rizzo
 
-from watchdog.observer import observer
+from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 import os
@@ -22,10 +22,10 @@ class MyHandler(FileSystemEventHandler):
             new_destination = folder_destinaton +"/" + filename
             os.rename(src, new_destination)
 
-folder_to_track = "C:\\Users\rizzo\Downloads\code"
-folder_destination = "C:\\Users\rizzo\Downloads\code"
+folder_to_track = "C:\\Users\\rizzo\\OneDrive\\School Year\\Fourth Year 2019\\Spring 2020\\Python-automation-script\\class-zip-auto\\testStart"
+folder_destination = "C:\\Users\\rizzo\\OneDrive\\School Year\\Fourth Year 2019\\Spring 2020\\Python-automation-script\\class-zip-auto\\testEnd"
 event_handler = MyHandler()
-observer = observer()
+observer = Observer()
 observer.schedule(event_handler, folder_to_track, recursive=True)
 try:    
     while True:
