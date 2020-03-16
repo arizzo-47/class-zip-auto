@@ -49,7 +49,7 @@ class Handler(FileSystemEventHandler):
                 except:
                     print("Zip removed")
                 
-
+# Extracts zipfile to destination directory
 def unzip(source_filename, dest_dir):
     zf = zipfile.ZipFile(source_filename)
     zf.extractall(dest_dir)
