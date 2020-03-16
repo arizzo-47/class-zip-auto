@@ -1,18 +1,19 @@
 import time
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 import zipfile
 import os
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
+# Monitor directory
 class Watcher:
-    DIRECTORY_TO_WATCH = "C:\\Users\\rizzo\\OneDrive\\School Year\\Fourth Year 2019\\Spring 2020\\Python-automation-script\\class-zip-auto\\testStart"
+    monitor_directory = r"C:\Users\rizzo\Downloads"
 
     def __init__(self):
         self.observer = Observer()
 
     def run(self):
         event_handler = Handler()
-        self.observer.schedule(event_handler, self.DIRECTORY_TO_WATCH, recursive=True)
+        self.observer.schedule(event_handler, self.monitor_directory, recursive=True)
         self.observer.start()
         try:
             while True:
@@ -23,27 +24,31 @@ class Watcher:
 
         self.observer.join()
 
-
+# Unzip, move, and rename starter folder
 class Handler(FileSystemEventHandler):
 
     @staticmethod
     def on_any_event(event):
         file_name = "code.zip"
 
+        # If monitored event is created or modified
         if event.event_type == 'created' or event.event_type == 'modified':
             print("Change in directory detected - %s.\n" % event.src_path)\
 
+            # Compare folder to file name we care about
             new_file = (event.src_path).split('\\')
             if new_file[len(new_file) - 1] == file_name:
-                directory_to_place = "C:\\Users\\rizzo\\OneDrive\\School Year\\Fourth Year 2019\\Spring 2020\\Python-automation-script\\class-zip-auto\\testStart"
+                directory_to_place = r"C:\Users\rizzo\OneDrive\School Year\Fourth Year 2019\Spring 2020\OOD\Download-Folder"
 
                 tempPath = directory_to_place + "\\tempDir"
         
                 if not os.path.exists(tempPath):
                     os.mkdir(tempPath)
                
+                # Unzip folder to temp location
                 unzip(file_name, tempPath)
 
+                # Remove zip folder after unzipping
                 try:
                     os.remove(directory_to_place+"\\"+file_name)
                 except:
