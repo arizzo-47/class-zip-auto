@@ -5,5 +5,6 @@ My college course, Object-Oriented Design, provides starter files for projects a
 which files.
 
 Solution:
+
 The script monitors my downloads folder for zip files with the name "code.zip" and automatically moves it to my course directory.
 This greatly declutters my downloads folder and makes the process of downloading starter files a bit easier to track.
