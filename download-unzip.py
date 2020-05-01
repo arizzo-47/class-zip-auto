@@ -47,6 +47,7 @@ class Handler(FileSystemEventHandler):
            
             fileSplit = os.path.splitext(new_file)
             file_no_extension = ""
+            
             # Loop through all but last element
             for item in fileSplit[:-1]:
                 file_no_extension += item
