@@ -6,7 +6,7 @@ from watchdog.events import FileSystemEventHandler
 
 # Monitor directory
 class Watcher:
-    monitor_directory = r"C:\Users\rizzo\Downloads"
+    monitor_directory = r"C:\Users\rizzo\OneDrive\Personal Projects\Python-automation-script\class-zip-auto\testFolder"
 
     def __init__(self):
         self.observer = Observer()
@@ -29,35 +29,37 @@ class Handler(FileSystemEventHandler):
 
     @staticmethod
     def on_any_event(event):
-        file_name = "code.zip"
-
+    
         # If monitored event is created or modified
         if event.event_type == 'created' or event.event_type == 'modified':
             print("Change in directory detected - %s.\n" % event.src_path)\
 
-            # Compare folder to file name we care about
-            new_file = (event.src_path).split('\\')
-            if new_file[len(new_file) - 1] == file_name:
-                directory_to_place = r"C:\Users\rizzo\OneDrive\School Year\Fourth Year 2019\Spring 2020\OOD\Download-Folder"
+            # Store path and name of file created
+            new_file_path = (event.src_path)
+            new_file_path_list = new_file_path.split('\\')
+            
+            new_file = new_file_path_list[len(new_file_path_list) -1]
+           
+            fileSplit = os.path.splitext(new_file)
+            extension = fileSplit[len(fileSplit) - 1]
 
-                tempPath = directory_to_place + "\\tempDir"
-        
-                if not os.path.exists(tempPath):
-                    os.mkdir(tempPath)
-               
+            # If file is zip
+            if extension == ".zip":
                 # Unzip folder to temp location
-                unzip(file_name, tempPath)
+                print(new_file_path)
+                unzip(new_file, r"C:\Users\rizzo\OneDrive\Personal Projects\Python-automation-script\class-zip-auto\testFolder")
 
                 # Remove zip folder after unzipping
                 try:
-                    os.remove(directory_to_place+"\\"+file_name)
+                    os.remove(new_file_path)
                 except:
                     print("Zip removed")
                 
 # Extracts zipfile to destination directory
-def unzip(source_filename, dest_dir):
+def unzip(source_filename, file_path):
+
     zf = zipfile.ZipFile(source_filename)
-    zf.extractall(dest_dir)
+    zf.extractall(file_path)
 
 if __name__ == '__main__':
     w = Watcher()
