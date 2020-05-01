@@ -31,23 +31,37 @@ class Handler(FileSystemEventHandler):
     def on_any_event(event):
     
         # If monitored event is created or modified
-        if event.event_type == 'created' or event.event_type == 'modified':
-            print("Change in directory detected - %s.\n" % event.src_path)\
+        if event.event_type == 'created':
+            print("Change in directory detected - %s\n" % event.src_path)
 
             # Store path and name of file created
             new_file_path = (event.src_path)
             new_file_path_list = new_file_path.split('\\')
-            
+
+            monitor_directory = ""
+            for item in new_file_path_list[:-1]:
+                monitor_directory += item + '\\'
+
             new_file = new_file_path_list[len(new_file_path_list) -1]
            
             fileSplit = os.path.splitext(new_file)
+            file_no_extension = ""
+            # Loop through all but last element
+            for item in fileSplit[:-1]:
+                file_no_extension += item
+
             extension = fileSplit[len(fileSplit) - 1]
 
             # If file is zip
             if extension == ".zip":
-                # Unzip folder to temp location
-                print(new_file_path)
-                unzip(new_file, r"C:\Users\rizzo\OneDrive\Personal Projects\Python-automation-script\class-zip-auto\testFolder")
+                unzip_location = monitor_directory + file_no_extension
+
+                index = 1
+                while os.path.exists(unzip_location):
+                    unzip_location = monitor_directory + file_no_extension + "(" + str(index) + ")"
+                    index += 1
+
+                unzip(new_file, unzip_location)
 
                 # Remove zip folder after unzipping
                 try:
